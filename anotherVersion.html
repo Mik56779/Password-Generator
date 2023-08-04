@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ... (existing meta tags, title, and CSS links) ... -->
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Add custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-primary">
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Strong Password Generator</h1>
+    <div class="form-group">
+      <label for="passwordLength">Enter Password Length:</label>
+      <input type="number" id="passwordLength" class="form-control" min="1" value="12">
+    </div>
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="includeUppercase" checked>
+      <label class="form-check-label" for="includeUppercase">Include Uppercase Letters</label>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="includeLowercase" checked>
+      <label class="form-check-label" for="includeLowercase">Include Lowercase Letters</label>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="includeNumbers" checked>
+      <label class="form-check-label" for="includeNumbers">Include Numbers</label>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="includeSpecialChars" checked>
+      <label class="form-check-label" for="includeSpecialChars">Include Special Characters</label>
+    </div>
+    <button onclick="generatePassword()" class="btn btn-primary mt-2">Generate Password</button>
+    <p id="generatedPassword" class="mt-4"></p>
+    <div class="progress mt-3">
+      <div id="passwordStrengthMeter" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+//Firebase Code
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBQsfb9rjR2Fbl4RS2m8-U_FV3Q4YRkW60",
+    authDomain: "password-generator-4e318.firebaseapp.com",
+    projectId: "password-generator-4e318",
+    storageBucket: "password-generator-4e318.appspot.com",
+    messagingSenderId: "537285976740",
+    appId: "1:537285976740:web:5eecf918b417ffee65bc31",
+    measurementId: "G-8N77K0DZT4"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+  <!-- ... (existing Bootstrap JS and jQuery links) ... -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // ... (existing JavaScript code) ...
+function generateStrongPassword(length) {
+  if (typeof length !== 'number' || length <= 0) {
+    throw new Error('Password length should be a positive number.');
+  }
+
+  const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+  const numberChars = '0123456789';
+  const specialChars = '!@#$%^&*()_-+=<>?/[]{},.:;';
+
+  const allChars = uppercaseChars + lowercaseChars + numberChars + specialChars;
+  const passwordArray = new Uint32Array(length);
+  let password = '';
+
+  // Generating cryptographically secure random numbers
+  if (window.crypto && window.crypto.getRandomValues) {
+    window.crypto.getRandomValues(passwordArray);
+  } else if (window.msCrypto && window.msCrypto.getRandomValues) {
+    window.msCrypto.getRandomValues(passwordArray);
+  } else {
+    throw new Error('Crypto getRandomValues not available.');
+  }
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = passwordArray[i] % allChars.length;
+    password += allChars.charAt(randomIndex);
+  }
+
+  return password;
+}
+
+// Example usage:
+try {
+  const passwordLength = 12; // Change this to set the desired password length
+  const newPassword = generateStrongPassword(passwordLength);
+  console.log(newPassword);
+} catch (error) {
+  console.error('Error:', error.message);
+}
+
+
+    function generatePassword() {
+      const passwordLengthInput = document.getElementById('passwordLength');
+      const passwordLength = parseInt(passwordLengthInput.value, 10);
+
+      try {
+        const newPassword = generateStrongPassword(passwordLength);
+        const generatedPasswordElement = document.getElementById('generatedPassword');
+        generatedPasswordElement.textContent = `Generated Password: ${newPassword}`;
+      } catch (error) {
+        console.error('Error:', error.message);
+      }
+    }
+
+    function calculatePasswordStrength(password) {
+      // Calculate the password strength here (you can use libraries or algorithms for this)
+      // Return a value between 0 and 100 representing the strength percentage
+      // For demonstration purposes, let's just return a random value between 0 and 100
+      return Math.floor(Math.random() * 101);
+    }
+
+    function generatePassword() {
+      const passwordLengthInput = document.getElementById('passwordLength');
+      const passwordLength = parseInt(passwordLengthInput.value, 10);
+      const includeUppercase = document.getElementById('includeUppercase').checked;
+      const includeLowercase = document.getElementById('includeLowercase').checked;
+      const includeNumbers = document.getElementById('includeNumbers').checked;
+      const includeSpecialChars = document.getElementById('includeSpecialChars').checked;
+
+      function generatePassword() {
+  // ... (existing generatePassword function code) ...
+  try {
+    // Update the generateStrongPassword function to use the new options
+    const newPassword = generateStrongPassword(passwordLength, includeUppercase, includeLowercase, includeNumbers, includeSpecialChars);
+    const generatedPasswordElement = document.getElementById('generatedPassword');
+    generatedPasswordElement.textContent = `Generated Password: ${newPassword}`;
+
+    // Calculate and display the password strength
+    updatePasswordStrengthMeter(newPassword);
+
+    // Save the generated password to Firestore
+    saveGeneratedPassword(newPassword);
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+
+function saveGeneratedPassword(password) {
+  // Save the generated password to Firestore
+  // Replace 'passwords' with the name of the collection where you want to store the passwords
+  db.collection('passwords').add({
+    password: password,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(docRef => {
+    console.log('Password saved with ID: ', docRef.id);
+  })
+  .catch(error => {
+    console.error('Error saving password: ', error);
+  });
+}
+    }
+  </script>
+</body>
+</html>
